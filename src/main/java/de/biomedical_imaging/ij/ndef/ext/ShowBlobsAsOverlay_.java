@@ -1,19 +1,21 @@
 package de.biomedical_imaging.ij.ndef.ext;
 
 import java.awt.Color;
-import java.awt.Event;
 import java.awt.MenuItem;
 import java.awt.Polygon;
 import java.awt.PopupMenu;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.util.ArrayList;
+import java.util.HashSet;
 
 import de.biomedical_imaging.ij.shapefilter.ImageResultsTableSelector;
 import de.biomedical_imaging.ij.shapefilter.Shape_Filter;
+import de.biomedical_imaging.ij.watershedellipse.Ellipse;
+import de.biomedical_imaging.ij.watershedellipse.ManyEllipses;
+import de.biomedical_imaging.ij.watershedellipse.WatershedEllipse_;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.Prefs;
@@ -25,7 +27,7 @@ import ij.gui.ImageCanvas;
 import ij.gui.Overlay;
 import ij.gui.PolygonRoi;
 import ij.gui.Roi;
-import ij.gui.Toolbar;
+import ij.measure.Calibration;
 import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
 /**
@@ -33,7 +35,7 @@ import ij.plugin.PlugIn;
  * @author Thorsten Wagner
  *
  */
-public class ShowAsOverlay_ implements PlugIn{
+public class ShowBlobsAsOverlay_ implements PlugIn{
 	ImagePlus binaryImg;
 	ImagePlus targetImg;
 	@Override
@@ -64,7 +66,7 @@ public class ShowAsOverlay_ implements PlugIn{
 		//targetImg.getWindow().getComponent(0).addKeyListener(new RestorOverlayListener(this));
 		ImageCanvas ic = (ImageCanvas)targetImg.getWindow().getComponent(0); 
 		ic.disablePopupMenu(true);
-		ic.addMouseListener(new ImagePopupListener(ic,this));
+		ic.addMouseListener(new BlobImagePopupListener(ic,targetImg,this));
 		showOverlay();
 	}
 	
@@ -96,13 +98,20 @@ public class ShowAsOverlay_ implements PlugIn{
 
 }
 
-class ImagePopupListener implements MouseListener {
+class BlobImagePopupListener implements MouseListener {
 
 	ImageCanvas ic;
-	ShowAsOverlay_ plugin;
-	public ImagePopupListener(ImageCanvas ic,ShowAsOverlay_ plugin) {
+	ShowBlobsAsOverlay_ plugin;
+	ImagePlus targetImp;
+	boolean multipleBlobSelection;
+	ArrayList<Blob> selectedBlobs;
+	
+	public BlobImagePopupListener(ImageCanvas ic,ImagePlus targetImp,ShowBlobsAsOverlay_ plugin) {
 		this.ic = ic;
 		this.plugin = plugin;
+		this.targetImp = targetImp;
+		multipleBlobSelection = false;
+		selectedBlobs = new ArrayList<Blob>();
 	}
 	
 	@Override
@@ -139,31 +148,60 @@ class ImagePopupListener implements MouseListener {
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				int start = IJ.getTextPanel().getSelectionStart();
-				int end = IJ.getTextPanel().getSelectionEnd();
-				if(start!=-1){
+				if(multipleBlobSelection && ImageResultsTableSelector.isParticleSelected == false){
+					
+					ResultsTable rt = ResultsTable.getResultsTable();
+					//Generate set of labels
+					HashSet<Integer> labelSet = new HashSet<Integer>();
+					for (Blob b : selectedBlobs) {
+						labelSet.add(b.getLabel());
+					}
 
-					if(start == end && ImageResultsTableSelector.isParticleSelected){
-						
-						int frame = Integer.parseInt(ResultsTable.getResultsTable().getStringValue(0, start));
-						int label = Integer.parseInt(ResultsTable.getResultsTable().getStringValue(1, start));
+					for(int j = 0; j < rt.getCounter(); j++){
+						int frame = Integer.parseInt(rt.getStringValue(0, j));
+						if(frame!=targetImp.getCurrentSlice()){
+							continue;
+						}
+						int label = Integer.parseInt(rt.getStringValue(1, j));
+						if(labelSet.contains(label)){
+							ResultsTable.getResultsTable().deleteRow(j);
+							j--;
+						}
 
-						Blob b = Shape_Filter.getInstance().getBlobByFrameAndLabel(frame-1, label);
-						Shape_Filter.getInstance().getAllBlobs()[frame-1].remove(b);
-
-						ResultsTable.getResultsTable().deleteRow(start);
-			
-						Prefs.set("ndef.NumberOfParticles", ResultsTable.getResultsTable().getCounter());
-						IJ.runMacro("updateResults();");
-						ImageResultsTableSelector.isParticleSelected = false;
-						plugin.showOverlay();
+					}
+					Shape_Filter.getInstance().getAllBlobs()[targetImp.getCurrentSlice()-1].removeAll(selectedBlobs);
+					Prefs.set("ndef.NumberOfParticles", ResultsTable.getResultsTable().getCounter());
+					IJ.runMacro("updateResults();");
+					IJ.run("Select None");
+					multipleBlobSelection =false;
+					plugin.showOverlay();
+				}
+				else{
+					int start = IJ.getTextPanel().getSelectionStart();
+					int end = IJ.getTextPanel().getSelectionEnd();
+					if(start!=-1){
+	
+						if(start == end && ImageResultsTableSelector.isParticleSelected){
+							
+							int frame = Integer.parseInt(ResultsTable.getResultsTable().getStringValue(0, start));
+							int label = Integer.parseInt(ResultsTable.getResultsTable().getStringValue(1, start));
+	
+							Blob b = Shape_Filter.getInstance().getBlobByFrameAndLabel(frame-1, label);
+							Shape_Filter.getInstance().getAllBlobs()[frame-1].remove(b);
+	
+							ResultsTable.getResultsTable().deleteRow(start);
+				
+							Prefs.set("ndef.NumberOfParticles", ResultsTable.getResultsTable().getCounter());
+							IJ.runMacro("updateResults();");
+							ImageResultsTableSelector.isParticleSelected = false;
+							plugin.showOverlay();
+						}
 					}
 				}
-				
 			}
 		});
 		
-		removeParticleItem.setEnabled(ImageResultsTableSelector.isParticleSelected);
+		removeParticleItem.setEnabled(ImageResultsTableSelector.isParticleSelected || multipleBlobSelection);
 		
 		MenuItem restorSelectionItem = new MenuItem("Restore particle selection");
 		
@@ -189,6 +227,42 @@ class ImagePopupListener implements MouseListener {
 	public void mouseReleased(MouseEvent e) {
 		if (e.isPopupTrigger()) {
 			showPopupMenu(e.getX(), e.getY());
+		}
+		if(targetImp.getRoi()!=null){
+			if(targetImp.getRoi().getType() == 0){
+				Overlay ov = targetImp.getOverlay();
+				if(ov==null){
+					ov = new Overlay();
+					targetImp.setOverlay(ov);
+				}else{
+					ov.clear();
+				}
+				Roi r = targetImp.getRoi();
+
+				ManyBlobs bl = Shape_Filter.getInstance().getAllBlobs()[targetImp.getCurrentSlice()-1];
+				selectedBlobs = new ArrayList<Blob>();
+
+				for (Blob blob : bl) {
+					if(r.contains((int)targetImp.getCalibration().getRawX(blob.getCenterOfGravity().getX()), (int)targetImp.getCalibration().getRawY(blob.getCenterOfGravity().getY()))){
+
+						selectedBlobs.add(blob);
+						multipleBlobSelection = true;
+						Polygon p = new Polygon(blob.getOuterContour().xpoints.clone(),blob.getOuterContour().ypoints.clone(), blob.getOuterContour().npoints);
+						PolygonRoi pr = new PolygonRoi(p, Roi.TRACED_ROI);
+						pr.setStrokeWidth(2);
+						pr.setPosition(targetImp.getCurrentSlice());
+						ov.add(pr);
+						targetImp.repaintWindow();
+					}
+				}
+			}else{
+				multipleBlobSelection = false;
+				selectedBlobs = new ArrayList<Blob>();
+			}
+		}
+		else{
+			multipleBlobSelection = false;
+			selectedBlobs = new ArrayList<Blob>();
 		}
 		
 	}
