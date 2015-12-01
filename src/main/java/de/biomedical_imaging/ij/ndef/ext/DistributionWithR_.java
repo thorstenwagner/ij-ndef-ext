@@ -4,9 +4,6 @@ import java.awt.Menu;
 import java.awt.MenuItem;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-
 import de.biomedical_imaging.ij.shapefilter.Shape_Filter;
 import ij.IJ;
 import ij.blob.Blob;

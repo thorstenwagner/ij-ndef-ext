@@ -13,9 +13,6 @@ import java.util.HashSet;
 
 import de.biomedical_imaging.ij.shapefilter.ImageResultsTableSelector;
 import de.biomedical_imaging.ij.shapefilter.Shape_Filter;
-import de.biomedical_imaging.ij.watershedellipse.Ellipse;
-import de.biomedical_imaging.ij.watershedellipse.ManyEllipses;
-import de.biomedical_imaging.ij.watershedellipse.WatershedEllipse_;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.Prefs;
@@ -27,7 +24,6 @@ import ij.gui.ImageCanvas;
 import ij.gui.Overlay;
 import ij.gui.PolygonRoi;
 import ij.gui.Roi;
-import ij.measure.Calibration;
 import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
 /**

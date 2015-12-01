@@ -1,6 +1,5 @@
 package de.biomedical_imaging.ij.ndef.ext;
 
-import ij.IJ;
 import ij.ImagePlus;
 import ij.blob.Blob;
 import ij.blob.ManyBlobs;
@@ -36,8 +35,6 @@ public class MouseInAgglomerateListener implements MouseListener {
 			double mag = ((ImageCanvas)deaggloImage.getWindow().getComponent(0)).getMagnification();
 			double cX = deaggloImage.getCalibration().getX(1);
 			double cY = deaggloImage.getCalibration().getY(1);
-			double x = e.getX()*cX*1.0/mag; //deaggloImage.getCalibration().getX() ;
-			double y = e.getY()*cY*1.0/mag; //deaggloImage.getCalibration().getY() ;
 			
 			Overlay ov = deaggloImage.getOverlay();
 			if(ov == null){

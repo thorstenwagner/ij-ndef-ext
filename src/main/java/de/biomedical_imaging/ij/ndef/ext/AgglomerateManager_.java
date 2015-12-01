@@ -2,10 +2,8 @@ package de.biomedical_imaging.ij.ndef.ext;
 
 
 import de.biomedical_imaging.ij.shapefilter.Shape_Filter;
-import ij.IJ;
 import ij.ImagePlus;
 import ij.WindowManager;
-import ij.blob.ManyBlobs;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
 

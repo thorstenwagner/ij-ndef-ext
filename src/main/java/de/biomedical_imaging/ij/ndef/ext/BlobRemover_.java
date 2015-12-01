@@ -4,15 +4,12 @@ import java.awt.Color;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 
-import de.biomedical_imaging.ij.shapefilter.Shape_Filter;
-import ij.IJ;
 import ij.ImagePlus;
 import ij.WindowManager;
 import ij.blob.Blob;
 import ij.blob.ManyBlobs;
 import ij.gui.GenericDialog;
 import ij.gui.PolygonRoi;
-import ij.measure.ResultsTable;
 import ij.plugin.filter.PlugInFilter;
 import ij.process.ImageProcessor;
 import ij.process.ImageStatistics;
@@ -22,7 +19,6 @@ public class BlobRemover_ implements PlugInFilter {
 	int tMean,tMedian;
 	ImagePlus imp;
 	ImagePlus greyscaleImage;
-	private ManyBlobs[] shapeFilterBlobs;
 	ArrayList<Integer> rowsToDelte;	
 	@Override
 	public int setup(String arg, ImagePlus imp) {

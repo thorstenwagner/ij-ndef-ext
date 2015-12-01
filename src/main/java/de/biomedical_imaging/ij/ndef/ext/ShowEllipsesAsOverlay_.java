@@ -23,9 +23,6 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import javax.swing.plaf.multi.MultiButtonUI;
-
-import de.biomedical_imaging.ij.shapefilter.Shape_Filter;
 import de.biomedical_imaging.ij.watershedellipse.Ellipse;
 import de.biomedical_imaging.ij.watershedellipse.ImageResultsTableSelector;
 import de.biomedical_imaging.ij.watershedellipse.ManyEllipses;

@@ -1,8 +1,6 @@
 package de.biomedical_imaging.ij.ndef.ext;
 
 
-import java.awt.Rectangle;
-
 import de.biomedical_imaging.ij.shapefilter.Shape_Filter;
 import ij.IJ;
 import ij.ImagePlus;

@@ -1,6 +1,5 @@
 package de.biomedical_imaging.ij.ndef.ext;
 
-import ij.IJ;
 import ij.ImagePlus;
 import ij.measure.ResultsTable;
 import ij.plugin.PlugIn;
