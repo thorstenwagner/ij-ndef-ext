@@ -13,7 +13,7 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	
 	<groupId>de.biomedical-imaging.ij</groupId>
 	<artifactId>ij_ndef_ext</artifactId>
-	<version>1.0.0</version>
+	<version>1.2.0</version>
 	<packaging>jar</packaging>
  
 	<name>Nanodefine helper plugins for ImageJ</name><!--$NO-MVN-MAN-VER$-->
@@ -58,8 +58,13 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
 		</dependency>
 		<dependency>
 			<groupId>de.biomedical_imaging.ij</groupId>
-			<artifactId>WatershedEllipse</artifactId>
-			<version>0.3.3</version>
+			<artifactId>EllipseSplit</artifactId>
+			<version>0.3.6</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.apache.commons</groupId>
+		    <artifactId>commons-math3</artifactId>
+		    <version>3.6</version>
 		</dependency>
  	</dependencies>
 	<developers>

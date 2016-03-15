@@ -2,22 +2,21 @@ package de.biomedical_imaging.ij.ndef.ext;
 
 import java.awt.Window;
 import java.awt.event.MouseListener;
-
-import de.biomedical_imaging.ij.shapefilter.ImageResultsTableSelector;
-import de.biomedical_imaging.ij.shapefilter.ResultsTableSelectionDrawer;
-import de.biomedical_imaging.ij.shapefilter.Shape_Filter;
+import de.biomedical_imaging.ij.ellipsesplit.EllipseSplit_;
+import de.biomedical_imaging.ij.ellipsesplit.ImageResultsTableSelector;
+import de.biomedical_imaging.ij.ellipsesplit.ResultsTableSelectionDrawer;
 import ij.IJ;
 import ij.ImagePlus;
 import ij.WindowManager;
 import ij.gui.GenericDialog;
 import ij.plugin.PlugIn;
 
-public class RegisterImageToShapeFilter_ implements PlugIn{
+public class RegisterImageToEllipseFitting_ implements PlugIn{
 
 	@Override
 	public void run(String arg) {
 		// TODO Auto-generated method stub
-		if(Shape_Filter.getInstance()==null){
+		if(EllipseSplit_.getInstance()==null){
 			throw new IllegalStateException("Shape Filter is not runnig!");
 		}
 		String[] openWindows = new String[WindowManager.getImageCount()];

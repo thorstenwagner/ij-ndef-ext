@@ -4,7 +4,6 @@ import ij.IJ;
 import ij.ImagePlus;
 import ij.Prefs;
 import ij.WindowManager;
-import ij.gui.GenericDialog;
 import ij.gui.ImageCanvas;
 import ij.gui.Overlay;
 import ij.gui.PolygonRoi;
@@ -23,10 +22,10 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.HashSet;
 
-import de.biomedical_imaging.ij.watershedellipse.Ellipse;
-import de.biomedical_imaging.ij.watershedellipse.ImageResultsTableSelector;
-import de.biomedical_imaging.ij.watershedellipse.ManyEllipses;
-import de.biomedical_imaging.ij.watershedellipse.WatershedEllipse_;
+import de.biomedical_imaging.ij.ellipsesplit.Ellipse;
+import de.biomedical_imaging.ij.ellipsesplit.EllipseSplit_;
+import de.biomedical_imaging.ij.ellipsesplit.ImageResultsTableSelector;
+import de.biomedical_imaging.ij.ellipsesplit.ManyEllipses;
 
 public class ShowEllipsesAsOverlay_ implements PlugIn{
 	ImagePlus binaryImg;
@@ -35,29 +34,28 @@ public class ShowEllipsesAsOverlay_ implements PlugIn{
 	@Override
 	public void run(String arg) {
 		// TODO Auto-generated method stub
-		if(WatershedEllipse_.getInstance()==null){
+		if(EllipseSplit_.getInstance()==null){
 			throw new IllegalStateException("Ellipse fitting is not runnig!");
 		}
 		
 
-		String[] openWindows = new String[WindowManager.getImageCount()];
+	//	String[] openWindows = new String[WindowManager.getImageCount()];
 		
-		for(int i = 0; i < WindowManager.getImageCount(); i++){
-			openWindows[i] = WindowManager.getImage(WindowManager.getIDList()[i]).getTitle();
-		}
+		//for(int i = 0; i < WindowManager.getImageCount(); i++){
+		//	openWindows[i] = WindowManager.getImage(WindowManager.getIDList()[i]).getTitle();
+		//}
 		
-		GenericDialog gd = new GenericDialog("Show as overlay");
-		gd.addChoice("Binary_image: ", openWindows, openWindows[0]);
-		gd.addChoice("Target_image: ", openWindows, openWindows[1]);
-		gd.showDialog();
+//		GenericDialog gd = new GenericDialog("Show as overlay");
+//		gd.addChoice("Binary_image: ", openWindows, openWindows[0]);
+//		gd.addChoice("Target_image: ", openWindows, openWindows[1]);
+	//	gd.showDialog();
 		
-		int binaryIndex = gd.getNextChoiceIndex();
-		binaryImg = WindowManager.getImage(openWindows[binaryIndex]);
 		
-		int targetIndex = gd.getNextChoiceIndex();
-		targetImg = WindowManager.getImage(openWindows[targetIndex]);
-		WatershedEllipse_.getInstance().getResultsTableSelectionDrawer().setTargetImage(targetImg.getID()); 
-		WatershedEllipse_.getInstance().getImageResultsTableSelector().setTargetImage(targetImg.getID()); 
+	//	int targetIndex = gd.getNextChoiceIndex();
+		targetImg = WindowManager.getCurrentImage();
+		EllipseSplit_.getInstance().getResultsTableSelectionDrawer().setTargetImage(targetImg.getID()); 
+		EllipseSplit_.getInstance().getImageResultsTableSelector().setTargetImage(targetImg.getID()); 
+		
 		//targetImg.getWindow().getComponent(0).addKeyListener(new RestorOverlayListener(this));
 		ImageCanvas ic = (ImageCanvas)targetImg.getWindow().getComponent(0); 
 		ic.disablePopupMenu(true);
@@ -73,7 +71,7 @@ public class ShowEllipsesAsOverlay_ implements PlugIn{
 		}
 		ov.clear();
 		
-		ArrayList<ManyEllipses> allEllipses = WatershedEllipse_.getInstance().getAllEllipses();
+		ArrayList<ManyEllipses> allEllipses = EllipseSplit_.getInstance().getAllEllipses();
 
 		for(int i = 0; i < allEllipses.size(); i++){
 
@@ -166,7 +164,7 @@ class EllipseImagePopupListener implements MouseListener {
 
 					}
 					
-					WatershedEllipse_.getInstance().getAllEllipses().get(targetImp.getCurrentSlice()-1).removeAll(selectedEllipses);
+					EllipseSplit_.getInstance().getAllEllipses().get(targetImp.getCurrentSlice()-1).removeAll(selectedEllipses);
 					Prefs.set("ndef.NumberOfParticles", ResultsTable.getResultsTable().getCounter());
 					IJ.runMacro("updateResults();");
 					IJ.run("Select None");
@@ -184,8 +182,8 @@ class EllipseImagePopupListener implements MouseListener {
 							int frame = Integer.parseInt(ResultsTable.getResultsTable().getStringValue(0, start));
 							int label = Integer.parseInt(ResultsTable.getResultsTable().getStringValue(1, start));
 							
-							Ellipse ell = WatershedEllipse_.getInstance().getEllipseByFrameAndLabel(frame-1, label);
-							WatershedEllipse_.getInstance().getAllEllipses().get(targetImp.getCurrentSlice()-1).remove(ell);
+							Ellipse ell = EllipseSplit_.getInstance().getEllipseByFrameAndLabel(frame-1, label);
+							EllipseSplit_.getInstance().getAllEllipses().get(targetImp.getCurrentSlice()-1).remove(ell);
 	
 							ResultsTable.getResultsTable().deleteRow(start);
 				
@@ -237,7 +235,7 @@ class EllipseImagePopupListener implements MouseListener {
 					ov.clear();
 				}
 				Roi r = targetImp.getRoi();
-				ManyEllipses el = WatershedEllipse_.getInstance().getAllEllipses().get(targetImp.getCurrentSlice()-1);
+				ManyEllipses el = EllipseSplit_.getInstance().getAllEllipses().get(targetImp.getCurrentSlice()-1);
 				
 				for (Ellipse ellipse : el) {
 					if(r.contains((int)ellipse.getX(), (int)ellipse.getY())){
