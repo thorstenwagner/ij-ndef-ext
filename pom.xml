@@ -13,7 +13,7 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	
 	<groupId>de.biomedical-imaging.ij</groupId>
 	<artifactId>ij_ndef_ext</artifactId>
-	<version>1.2.0</version>
+	<version>1.2.2</version>
 	<packaging>jar</packaging>
  
 	<name>Nanodefine helper plugins for ImageJ</name><!--$NO-MVN-MAN-VER$-->

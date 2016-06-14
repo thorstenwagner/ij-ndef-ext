@@ -55,10 +55,10 @@ public class ShowBlobsAsOverlay_ implements PlugIn{
 		
 		int binaryIndex = gd.getNextChoiceIndex();
 		binaryImg = WindowManager.getImage(openWindows[binaryIndex]);
-		
+		binaryImg.getProperty("");
 		int targetIndex = gd.getNextChoiceIndex();
 		targetImg = WindowManager.getImage(openWindows[targetIndex]);
-
+		
 		//targetImg.getWindow().getComponent(0).addKeyListener(new RestorOverlayListener(this));
 		ImageCanvas ic = (ImageCanvas)targetImg.getWindow().getComponent(0); 
 		ic.disablePopupMenu(true);

@@ -96,15 +96,17 @@ public class ExportCMF_ implements PlugIn{
 	@Override
 	public void run(String arg) {
 		Menu Results = ResultsTable.getResultsWindow().getMenuBar().getMenu(3);
-		MenuItem exportCMF = new MenuItem("Export CMF");
-		exportCMF.addActionListener(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				exportCMF();
+		if(Results.getItem(Results.getItemCount()-1).getLabel().equals("Export CMF")==false){
+			MenuItem exportCMF = new MenuItem("Export CMF");
+			exportCMF.addActionListener(new ActionListener() {
 				
-			}
-		});
-		Results.add(exportCMF);
+				@Override
+				public void actionPerformed(ActionEvent arg0) {
+					exportCMF();
+					
+				}
+			});
+			Results.add(exportCMF);
+		}
 	}
 }
