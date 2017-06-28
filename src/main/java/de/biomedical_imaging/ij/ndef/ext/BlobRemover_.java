@@ -1,16 +1,20 @@
 package de.biomedical_imaging.ij.ndef.ext;
 
 import java.awt.Color;
+import java.awt.Polygon;
 import java.awt.Rectangle;
 import java.util.ArrayList;
 
+import ij.IJ;
 import ij.ImagePlus;
 import ij.WindowManager;
 import ij.blob.Blob;
 import ij.blob.ManyBlobs;
 import ij.gui.GenericDialog;
 import ij.gui.PolygonRoi;
+import ij.gui.Wand;
 import ij.plugin.filter.PlugInFilter;
+import ij.process.ByteProcessor;
 import ij.process.ImageProcessor;
 import ij.process.ImageStatistics;
 import ij.process.PolygonFiller;
@@ -99,7 +103,6 @@ public class BlobRemover_ implements PlugInFilter {
 		mb.findConnectedComponents();
 		for(int i = 0; i < mb.size(); i++){
 			double[] meanAndMeadian = getMeanAndMedian(mb.get(i), greyscaleImage.getStack().getProcessor(ip.getSliceNumber()));
-			
 			if(meanAndMeadian[0] < tMean || meanAndMeadian[1] < tMedian){
 				ip.setColor(Color.black);
 				PolygonRoi proi = new PolygonRoi(mb.get(i).getOuterContour(), PolygonRoi.POLYGON);
@@ -109,7 +112,6 @@ public class BlobRemover_ implements PlugInFilter {
 				ip.setRoi(r);
 				ImageProcessor objectMask = pf.getMask(r.width, r.height);
 				ip.fill(objectMask);
-			
 				ip.drawPolygon(mb.get(i).getOuterContour());
 			//	rowsToDelte.add(i);
 			}			
@@ -119,11 +121,24 @@ public class BlobRemover_ implements PlugInFilter {
 	private double[] getMeanAndMedian(Blob b, ImageProcessor greyscale){
 		greyscale.setRoi(b.getOuterContour());
 		int flags = ImageStatistics.MEDIAN+ImageStatistics.MEAN + ImageStatistics.SKEWNESS+ ImageStatistics.KURTOSIS +  ImageStatistics.STD_DEV;
-		
 		ImageStatistics is = ImageStatistics.getStatistics(greyscale, flags, null);
 		double[] result = {is.mean,is.median};
 		return result;
 
+	}
+	
+	private Polygon toWandContour(Polygon p){
+			Wand w = new Wand(imp.getProcessor());
+		//	IJ.log("DOIT x: " + b.getOuterContour().xpoints[0] + " y: " + b.getOuterContour().ypoints[0]);
+			w.autoOutline(p.xpoints[0], p.ypoints[0],0.0,Wand.EIGHT_CONNECTED);
+			
+			Wand.setAllPoints(true);
+			Polygon p1 = new Polygon();
+			
+			for(int i = 0; i < w.npoints; i++){
+				p1.addPoint(w.xpoints[i], w.ypoints[i]);
+			}
+			return p1;
 	}
 
 }
