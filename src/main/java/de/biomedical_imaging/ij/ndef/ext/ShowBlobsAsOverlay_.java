@@ -61,7 +61,18 @@ public class ShowBlobsAsOverlay_ implements PlugIn{
 		
 		//targetImg.getWindow().getComponent(0).addKeyListener(new RestorOverlayListener(this));
 		ImageCanvas ic = (ImageCanvas)targetImg.getWindow().getComponent(0); 
+		
 		ic.disablePopupMenu(true);
+		
+		// Clean up old listeners
+		MouseListener[] mls = (MouseListener[])(ic.getListeners(MouseListener.class));
+		for(int i = 0; i < mls.length; i++) {
+			if(mls[i] instanceof BlobImagePopupListener) {
+				ic.removeMouseListener(mls[i]);
+			}
+		}
+		
+		// Add new listener
 		ic.addMouseListener(new BlobImagePopupListener(ic,targetImg,this));
 		showOverlay();
 	}
@@ -75,9 +86,10 @@ public class ShowBlobsAsOverlay_ implements PlugIn{
 		ov.clear();
 		
 		ManyBlobs[] allblobs = Shape_Filter.getInstance().getAllBlobs();
+		
+		
 
 		for(int i = 0; i < allblobs.length; i++){
-
 			for (int j = 0; j < allblobs[i].size(); j++) {
 				Blob blob = allblobs[i].get(j);
 				

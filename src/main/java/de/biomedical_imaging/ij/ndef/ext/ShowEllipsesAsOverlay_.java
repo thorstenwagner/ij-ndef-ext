@@ -58,6 +58,16 @@ public class ShowEllipsesAsOverlay_ implements PlugIn{
 		
 		//targetImg.getWindow().getComponent(0).addKeyListener(new RestorOverlayListener(this));
 		ImageCanvas ic = (ImageCanvas)targetImg.getWindow().getComponent(0); 
+		
+		// Clean up old listeners
+		MouseListener[] mls = (MouseListener[])(ic.getListeners(MouseListener.class));
+		for(int i = 0; i < mls.length; i++) {
+			if(mls[i] instanceof EllipseImagePopupListener) {
+				ic.removeMouseListener(mls[i]);
+			}
+		}
+				
+		
 		ic.disablePopupMenu(true);
 		ic.addMouseListener(new EllipseImagePopupListener(ic,targetImg,this));
 		showOverlay();

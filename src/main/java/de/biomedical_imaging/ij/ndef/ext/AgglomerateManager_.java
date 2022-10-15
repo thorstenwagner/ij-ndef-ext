@@ -1,7 +1,10 @@
 package de.biomedical_imaging.ij.ndef.ext;
 
 
+import java.awt.event.MouseListener;
+
 import de.biomedical_imaging.ij.shapefilter.Shape_Filter;
+import ij.IJ;
 import ij.ImagePlus;
 import ij.WindowManager;
 import ij.gui.GenericDialog;
@@ -48,6 +51,17 @@ public class AgglomerateManager_ implements PlugIn {
 		boolean isVisible = (aggloImp.getWindow()!=null);
 		if(isVisible){
 			aggloImp.getWindow().setVisible(false);
+		}
+		
+		// Need to clean up previous listeners
+		// Clean up old listeners
+		
+		MouseListener[] mls = (MouseListener[])(deaggloImp.getWindow().getComponent(0).getListeners(MouseListener.class));
+		for(int i = 0; i < mls.length; i++) {
+			if(mls[i] instanceof MouseInAgglomerateListener) {
+				deaggloImp.getWindow().getComponent(0).removeMouseListener(mls[i]);
+			}
+	
 		}
 	
 		deaggloImp.getWindow().getComponent(0).addMouseListener(new MouseInAgglomerateListener(deaggloImp, aggloImp));
