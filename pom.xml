@@ -54,12 +54,16 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
 		<dependency>
 			<groupId>de.biomedical_imaging.ij</groupId>
 			<artifactId>shapefilter</artifactId>
-			<version>1.4.0</version>
+			<version>1.4.2</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/src/main/resources/ij_shape_filter-1.4.2.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>de.biomedical_imaging.ij</groupId>
 			<artifactId>EllipseSplit</artifactId>
-			<version>0.3.6</version>
+			<version>0.4.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/src/main/resources/ij_ellipse_split-0.4.0.jar</systemPath>
 		</dependency>
 		<dependency>
 		    <groupId>org.apache.commons</groupId>
