@@ -54,9 +54,9 @@ http://maven.apache.org/xsd/maven-4.0.0.xsd">
 		<dependency>
 			<groupId>de.biomedical_imaging.ij</groupId>
 			<artifactId>shapefilter</artifactId>
-			<version>1.4.2</version>
+			<version>1.4.4</version>
 			<scope>system</scope>
-			<systemPath>${project.basedir}/src/main/resources/ij_shape_filter-1.4.2.jar</systemPath>
+			<systemPath>${project.basedir}/src/main/resources/ij_shape_filter-1.4.4.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>de.biomedical_imaging.ij</groupId>

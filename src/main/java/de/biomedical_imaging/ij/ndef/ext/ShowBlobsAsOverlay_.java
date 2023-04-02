@@ -84,8 +84,8 @@ public class ShowBlobsAsOverlay_ implements PlugIn{
 			targetImg.setOverlay(ov);
 		}
 		ov.clear();
-		
-		ManyBlobs[] allblobs = Shape_Filter.getInstance().getAllBlobs();
+
+		ManyBlobs[] allblobs = Shape_Filter.getInstance().getAllFilteredBlobs();
 		
 		
 
